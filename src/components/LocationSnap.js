@@ -28,8 +28,8 @@ const LocationSnap = () => {
   
   const table = "view_sample";//イメージをBase64変換したカラムを持つビュー
  
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  const supabaseUrl = "https://db.vxejzlohkjrnheqjbuyn.supabase.co/";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZWp6bG9oa2pybmhlcWpidXluIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODA4MzI4MTgsImV4cCI6MTk5NjQwODgxOH0.uPf7jJgrbmhzR0Bkr58-OnKzMZz8NPqLvwdZMCwijvw";
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   useEffect(() => {
