@@ -26,17 +26,19 @@ const LocationSnap = () => {
 
   const positionProperty = new SampledPositionProperty();//フライトパス用
   
-  const table = "view_sample";//イメージをBase64変換したカラムを持つビュー
+  // const table = "view_sample";//イメージをBase64変換したカラムを持つビュー
  
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  // const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  // const supabase = createClient(supabaseUrl, supabaseKey);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         //supabaseに非同期アクセス
-        const { data, error } = await supabase.from(table).select("*");
+        const res = await fetch('/api/supabase');
+        const data = await res.json();
+        // const { data, error } = await supabase.from(table).select("*");
         
         console.log('///////////////////////////////////')
         console.log(data)
