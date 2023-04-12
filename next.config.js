@@ -8,9 +8,7 @@ module.exports = {
         // matching all API routes
         source: "/(.*)",
         headers: [
-          { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "*" },
           { key: "Access-Control-Allow-Headers", value: "authorization, content-type, x-client-info, apikey" },
         ]
       }
