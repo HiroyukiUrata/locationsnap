@@ -35,7 +35,7 @@ const LocationSnap = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //supabaseに非同期アクセス
+        //API:supabaseでデータフェッチ
         const res = await fetch('/api/supabase');
         const data = await res.json();
         // const { data, error } = await supabase.from(table).select("*");

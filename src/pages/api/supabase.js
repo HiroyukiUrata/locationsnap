@@ -10,6 +10,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req, res) => {
   try {
+    //supabaseに非同期アクセス
     const { data, error } = await supabase.from(table).select("*");
 
     if (error) {
