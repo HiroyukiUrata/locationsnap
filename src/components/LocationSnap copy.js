@@ -1,10 +1,17 @@
 import { Viewer, Entity,EntityDescription,Clock,} from "resium";
 import { Cartesian3,Rectangle,Color,HorizontalOrigin,VerticalOrigin,JulianDate,Quaternion,Math,HeadingPitchRoll,SampledPositionProperty,VelocityOrientationProperty,Transforms,Model,TimeInterval,TimeIntervalCollection,PathGraphics} from "cesium";
 import { useState,useEffect,useRef } from "react";
+import { createClient } from "@supabase/supabase-js";
 import Wareki from "./Wareki";
 import Loading from "./Loading";
+// import { Select } from "antd";
 
+// const { Option } = Select;
 
+//supabase上のpostgisのデータを読み込む
+//画像表示する
+//ズームする
+//撮影方向を表示する
 const LocationSnap = () => {
  
   const viewerRef = useRef();
@@ -12,19 +19,33 @@ const LocationSnap = () => {
   const [cylindershown, setCylindershown] = useState({});
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [start, setStart] = useState(JulianDate.now());
+  const [stop, setStop] = useState(JulianDate.now());
+
   const [clock, setClock] = useState();
 
   const positionProperty = new SampledPositionProperty();//フライトパス用
   
+  // const table = "view_sample";//イメージをBase64変換したカラムを持つビュー
+ 
+  // const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  // const supabase = createClient(supabaseUrl, supabaseKey);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         //API:supabaseでデータフェッチ
         const res = await fetch('/api/supabase');
         const data = await res.json();
+        // const { data, error } = await supabase.from(table).select("*");
         
+        console.log('///////////////////////////////////')
+        console.log(data)
+        console.log('///////////////////////////////////')
         setRecords(data);
         setLoading(false); // ローディングアイコンを非表示にする
+        //console.log(data)
       } catch (error) {
         console.log(error);
       }
@@ -164,6 +185,7 @@ const LocationSnap = () => {
 
 
   function startTrace(){
+    // setTraceEnabled(true);
     const viewer = viewerRef.current.cesiumElement;
      
     const samples = positionProperty._property._times; // サンプル配列を取得
@@ -173,6 +195,7 @@ const LocationSnap = () => {
     const airplaneLine=<Entity
     availability={new TimeIntervalCollection([new TimeInterval({start:oldestSample,stop:newestSample})])}
     position={positionProperty}
+    // point={{pixcelsize:'30',color:Color.GREEN}}
     model={{
       uri:'stickman.gltf',
       minimumPixelSize:100,
@@ -205,70 +228,53 @@ const LocationSnap = () => {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   return (
-    <div class="md:flex flex-row h-screen">
+    <>
       {loading && <Loading />}
       {!loading && (
         <>
-          <div class="flex flex-col bg-white-300 top-0 left-0 rounded mx-1 my-1">
-            <button
-              class="bg-red-300 hover:bg-red-200 text-white rounded px-4 py-2 mx-1 my-1"
-              onClick={handleZoom}
-            >
-              Reset View
-            </button>
-            <button
-              class="bg-green-300 hover:bg-green-200 text-white rounded px-4 py-2 mx-1 my-1"
-              onClick={toggleAllBillboard}
-            >
-              Thumbnail
-            </button>
-            <button
-              class="bg-orange-300 hover:bg-orange-200 text-white rounded px-4 py-2 mx-1 my-1"
-              onClick={toggleAllCylinder}
-            >
-              Direction
-            </button>
-            <button
-              class="bg-blue-300 hover:bg-blue-200 text-white rounded px-4 py-2 mx-1 my-1"
-              onClick={startTrace}
-            >
-              WalkThrough
-            </button>
-          </div>
+          <Viewer ref={viewerRef}>
+            <div class="absolute top-0 left-0 rounded mx-1 my-1">
+              <button
+                class="bg-red-300 hover:bg-red-200 text-white rounded px-4 py-2 mx-1"
+                onClick={handleZoom}
+              >
+                Reset View
+              </button>
+              <button
+                class="bg-green-300 hover:bg-green-200 text-white rounded px-4 py-2 mx-1"
+                onClick={toggleAllBillboard}
+              >
+                Toggle Thumbnail
+              </button>
+              <button
+                class="bg-orange-300 hover:bg-orange-200 text-white rounded px-4 py-2 mx-1"
+                onClick={toggleAllCylinder}
+              >
+                Toggle Direction
+              </button>
+              <button
+                class="bg-blue-300 hover:bg-blue-200 text-white rounded px-4 py-2 mx-1"
+                onClick={startTrace}
+                // onClick={startAnimation}
+              >
+                Trace Photos
+              </button>
+            </div>
 
-          <div class="h-screen w-screen">
-            <Viewer
-              ref={viewerRef}
-              vrButton={false}
-              geocoder={false}
-              homeButton={false}
-              // infoBox={false}
-              sceneModePicker={false}
-              selectionIndicator={false}
-              timeline={false}
-              // navigationHelpButton={false}
-              // navigationInstructionsInitiallyVisible={false}
-              // automaticallyTrackDataSourceClocks={false}
-              creditContainer={null}
-              // creditViewport={null}
-              style={{
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              {records ? (
-                <div>
-                  {records.map((record) => createEntity(record))}
-                  {clock}
-                </div>
-              ) : (
-                <div></div>
-              )}
-            </Viewer>
-          </div>
+            {records ? (
+              <div>
+                {records.map((record) => createEntity(record))}
+                {clock}
+              </div>
+            ) : (
+              <div></div>
+            )}
+            {/* {records.map((record) => createEntity(record))} */}
+            {/* {clock} */}
+          </Viewer>
         </>
       )}
-    </div>
+    </>
   );
 };
 
